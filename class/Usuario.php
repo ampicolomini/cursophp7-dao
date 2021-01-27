@@ -30,7 +30,7 @@ class Usuario{
     }
     public function loadById($id){
         $sql = new SqL();
-        $results = $sql->select("select * from tb_usuarios where idusuario = :ID", array(
+        $results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(
             ":ID"=>$id));
         if (count($results) > 0) {
             $this->setData($results[0]);
@@ -38,18 +38,18 @@ class Usuario{
     }
     public function getList(){
         $sql = new SqL();
-        return $sql->select("select * from tb_usuarios order by deslogin");
+        return $sql->select("SELECT * FROM tb_usuarios ORDER BY deslogin");
     }
     public function search($Login){
         $sql = new SqL();
-        return $sql->select("select * from tb_usuarios where deslogin like :SEARCH order by deslogin", array(
+        return $sql->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :SEARCH ORDER BY deslogin", array(
             ':SEARCH'=>"%".$login."%"));
     }
     public function login($Login, $password){
         $sql = new SqL();
-        $results = $sql->select("select * from tb_usuarios where deslogin = :LOGIN and dessenha = :PASSWORD", array(
-            ":LOGIN"=>$login,
-            ":PASSWORD"=>$password
+        $results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
+            ':LOGIN'=>$Login,
+            ':PASSWORD'=>$password
         ));
         if (count($results) > 0) {
             $this->setData($results[0]);            
@@ -74,18 +74,29 @@ class Usuario{
         }
     }
     public function update($Login, $password){
-        $this->setDeslogin($login);
+        $this->setDeslogin($Login);
         $this->setDessenha($password);
         $sql = new SqL();
-        $sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN, dessenha = :PASSWORD WHERE idusuario = :ID", array(
+        $sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN dessenha = :PASSWORD WHERE idusuario = :ID", array(
             ':LOGIN'=>$this->getDeslogin(),
             ':PASSWORD'=>$this->getDessenha(),
             ':ID'=>$this->getIdusuario()
         ));
 
     }
+    public function delete(){
+        $sql = new SqL();
+        $sql->query("DELETE FROM tb_usuarios WHERE idusuario = :ID", array(
+            ':ID'=>$this->getIdusuario()
+        ));
+        $this->setIdusuario(0);
+        $this->setDeslogin("");
+        $this->setDessenha("");
+        $this->setDtcadastro(new DateTime());
+    }
+
     public function __construct($Login = "", $password = ""){
-        $this->setDeslogin($login);
+        $this->setDeslogin($Login);
         $this->setDessenha($password);
     }
     public function __toString(){
